@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang=en>
+
+<head>
+    
+   
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"
+    />
+    <title>{% block TITLE %}{% endblock %} - To-Do App</title>
+</head>
+
+<body>
+<nav>
+    <h1>To-Do App</h1>
+    <a href="{{ url_for('lists') }}">Lists</a>
+</nav>
+<section class="content">
+    <header>{% block HEADER %}{% endblock %}</header>
+    {% block CONTENT %}{% endblock %}
+</section>
+</body>
+
+</html>
