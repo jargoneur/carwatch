@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>CarWatch – Profil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --bg: #050814;
+            --bg-elevated: #101425;
+            --bg-sidebar: #080b16;
+            --accent: #1e90ff;
+            --accent-soft: rgba(30, 144, 255, 0.12);
+            --text: #f5f5f5;
+            --muted: #8a8fa3;
+            --border-subtle: rgba(255,255,255,0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #192547 0, #050814 45%, #02030a 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: 230px;
+            background: linear-gradient(180deg, #080b16, #050814);
+            border-right: 1px solid var(--border-subtle);
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-logo-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            background: radial-gradient(circle at 30% 20%, #4fc3f7, #1e88e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
+            font-size: 16px;
+            font-weight: 800;
+            color: #02030a;
+        }
+
+        .sidebar-logo-text-main {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-logo-text-sub {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.16em;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--muted);
+            margin: 10px 2px 4px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 9px;
+            border-radius: 9px;
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-link span.icon {
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .sidebar-link.active {
+            background: var(--accent-soft);
+            color: var(--text);
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.04);
+            color: var(--text);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 11px;
+            color: var(--muted);
+            opacity: 0.8;
+        }
+
+        .sidebar-footer-pill {
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 4px 9px;
+            background: rgba(1,3,10,0.9);
+            display: inline-flex;
+        }
+
+        /* Main */
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 18px;
+            gap: 16px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .topbar-title {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .topbar-title h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .topbar-title span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-subtle);
+            color: var(--muted);
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: radial-gradient(circle at 30% 20%, #4fc3f7, #1e88e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #02030a;
+        }
+
+        /* Cards */
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1.6fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(0,0,0,0.6));
+            border-radius: 16px;
+            padding: 14px 14px 12px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+            backdrop-filter: blur(14px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .pill {
+            font-size: 11px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.6);
+            color: var(--muted);
+        }
+
+        /* Profil-Basics */
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .profile-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #4fc3f7, #1e88e5);
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #02030a;
+        }
+
+        .profile-info-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .profile-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .profile-meta {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .profile-meta span {
+            margin-right: 8px;
+        }
+
+        .profile-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .profile-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field label {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 9px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(4,8,20,0.95);
+            color: var(--text);
+            font-size: 12px;
+            outline: none;
+            transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .field input::placeholder {
+            color: #4a5064;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(30,144,255,0.4);
+            background: rgba(4,8,20,1);
+        }
+
+        /* Rollen / Käufer / Verkäufer */
+
+        .role-toggle {
+            display: inline-flex;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            background: rgba(0,0,0,0.5);
+            margin-top: 6px;
+        }
+
+        .role-option {
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            color: var(--muted);
+        }
+
+        .role-option:last-child {
+            border-right: none;
+        }
+
+        .role-option.active {
+            background: var(--accent-soft);
+            color: var(--text);
+        }
+
+        .role-hint {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .role-cols {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 700px) {
+            .role-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .role-box {
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.55);
+            padding: 9px 10px;
+            font-size: 12px;
+        }
+
+        .role-box-title {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .role-box-list {
+            font-size: 11px;
+            color: var(--muted);
+            margin-left: 14px;
+            margin-top: 2px;
+        }
+
+        .role-box-list li {
+            margin-bottom: 2px;
+        }
+
+        .role-box-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            margin-top: 6px;
+            color: var(--muted);
+        }
+
+        .role-box-label input[type="checkbox"] {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* Aktionen */
+
+        .actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            border: none;
+            border-radius: 999px;
+            padding: 7px 13px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #1e90ff, #4fc3f7);
+            color: #02030a;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(1,3,10,0.9);
+            color: var(--muted);
+            font-size: 12px;
+            padding: 7px 11px;
+            cursor: pointer;
+        }
+
+        .note {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">CW</div>
+                <div>
+                    <div class="sidebar-logo-text-main">CarWatch</div>
+                    <div class="sidebar-logo-text-sub">vehicle monitoring</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section-title">Navigation</div>
+            <nav class="sidebar-nav">
+                <a href="/login" class="sidebar-link">
+                    <span class="icon">⮌</span>
+                    <span>Zurück zum Login</span>
+                </a>
+                <a href="/autoliste" class="sidebar-link">
+                    <span class="icon">🚗</span>
+                    <span>Fahrzeuge</span>
+                </a>
+                <a href="/profil" class="sidebar-link active">
+                    <span class="icon">👤</span>
+                    <span>Profil</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-pill">
+                Profil · Verkäufer / Käufer
+            </div>
+        </div>
+    </aside>
+
+    <!-- Hauptbereich -->
+    <main class="main">
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1>Profil & Rollen</h1>
+                <span>Verwaltung deiner Verkäufer- und Käufer-Einstellungen (UI, keine echte Speicherung)</span>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-badge">
+                    Testversion · v0.1
+                </div>
+                <div class="profile-icon">
+                    U
+                </div>
+            </div>
+        </header>
+
+        <section class="layout-grid">
+            <!-- Linke Card: Basis-Profil -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Profilinformationen</div>
+                        <div class="card-subtitle">Stammdaten für dein CarWatch-Konto</div>
+                    </div>
+                    <div class="pill">
+                        Platzhalter · nicht gespeichert
+                    </div>
+                </div>
+
+                <div class="profile-header">
+                    <div class="profile-avatar">U</div>
+                    <div class="profile-info-main">
+                        <div class="profile-name">Max Mustermann</div>
+                        <div class="profile-meta">
+                            <span>ID: CW-USER-0123</span>
+                            <span>angemeldet als Demo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-fields">
+                    <div class="field">

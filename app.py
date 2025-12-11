@@ -15,6 +15,21 @@ app.teardown_appcontext(db.close_db_con)
 def index():
     return redirect(url_for('lists'))
 
+    # neu hinzugefügt
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/autoliste")
+def autoliste():
+    return render_template("autoliste.html")
+
+@app.route("/profil")
+def profil():
+    return render_template("profil.html")
+
+
 @app.route('/lists/')
 def lists():
     db_con = db.get_db_con()
@@ -58,3 +73,7 @@ def list(id):
 def run_insert_sample():
     db.insert_sample()
     return 'Database flushed and populated with some sample data.'
+
+# Run the app
+if __name__ == "__main__":
+    app.run(debug=True)
