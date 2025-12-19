@@ -1,25 +1,88 @@
+
 ---
 layout: default
-title: Datenmodell
+title: Fahrzeug – Datenmodell
 permalink: /datenmodell/
 ---
 
-<h1>{{ site.data.schema.entity }} – Datenmodell</h1>
+<h1>Fahrzeug – Datenmodell</h1>
+
+<p>Diese Seite beschreibt ausschließlich die <strong>Datenstruktur</strong> eines Fahrzeugs. Es werden keine realen Daten verwendet.</p>
 
 <table>
   <thead>
     <tr>
-      <th>Feld</th><th>Typ</th><th>Pflicht</th><th>Werte</th>
+      <th>Feld</th>
+      <th>Typ</th>
+      <th>Pflicht</th>
+      <th>Beschreibung</th>
+      <th>Werte</th>
     </tr>
   </thead>
   <tbody>
-    {% for f in site.data.schema.fields %}
     <tr>
-      <td>{{ f.name }}</td>
-      <td>{{ f.type }}</td>
-      <td>{% if f.derived %}berechnet{% else %}{{ f.required }}{% endif %}</td>
-      <td>{% if f.values %}{{ f.values | join: ", " }}{% else %}—{% endif %}</td>
+      <td>id</td>
+      <td>integer</td>
+      <td>ja</td>
+      <td>Eindeutige Fahrzeug-ID</td>
+      <td>—</td>
     </tr>
-    {% endfor %}
+    <tr>
+      <td>marke</td>
+      <td>string</td>
+      <td>ja</td>
+      <td>Automarke</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>modell</td>
+      <td>string</td>
+      <td>ja</td>
+      <td>Modellbezeichnung</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>baujahr</td>
+      <td>integer</td>
+      <td>ja</td>
+      <td>Jahr der Erstzulassung</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>zustand</td>
+      <td>enum</td>
+      <td>ja</td>
+      <td>Zustand des Fahrzeugs</td>
+      <td>neu, sehr_gut, gut, ok, schlecht</td>
+    </tr>
+    <tr>
+      <td>kilometer</td>
+      <td>integer</td>
+      <td>ja</td>
+      <td>Kilometerstand (km)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>motortyp</td>
+      <td>enum</td>
+      <td>ja</td>
+      <td>Motortyp</td>
+      <td>benzin, diesel, hybrid, elektrisch</td>
+    </tr>
+    <tr>
+      <td>farbe</td>
+      <td>string</td>
+      <td>ja</td>
+      <td>Fahrzeugfarbe</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>score</td>
+      <td>integer</td>
+      <td>nein (berechnet)</td>
+      <td>Bewertungs-Score, abgeleitet aus Baujahr, Zustand, Kilometer und Motortyp</td>
+      <td>0–100</td>
+    </tr>
   </tbody>
 </table>
+```
