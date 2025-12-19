@@ -1,0 +1,57 @@
+entity: Fahrzeug
+description: Datenmodell für Fahrzeuge (Strukturdefinition)
+fields:
+  - name: id
+    type: integer
+    required: true
+    description: Eindeutige ID des Fahrzeugs
+
+  - name: marke
+    type: string
+    required: true
+    description: Automarke
+
+  - name: modell
+    type: string
+    required: true
+    description: Modellbezeichnung
+
+  - name: baujahr
+    type: integer
+    required: true
+    description: Jahr der Erstzulassung
+
+  - name: zustand
+    type: enum
+    required: true
+    values:
+      - neu
+      - sehr_gut
+      - gut
+      - ok
+      - schlecht
+
+  - name: kilometer
+    type: integer
+    required: true
+    unit: km
+    description: Gesamtkilometerstand
+
+  - name: motortyp
+    type: enum
+    required: true
+    values:
+      - benzin
+      - diesel
+      - hybrid
+      - elektrisch
+
+  - name: farbe
+    type: string
+    required: true
+    description: Fahrzeugfarbe
+
+  - name: score
+    type: integer
+    derived: true
+    description: Bewertungs-Score, berechnet aus Baujahr, Zustand, Kilometer und Motortyp
