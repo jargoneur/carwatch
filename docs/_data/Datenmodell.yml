@@ -1,0 +1,49 @@
+---
+layout: default
+title: Datenmodell
+permalink: datenmodell
+---
+
+# Fahrzeug – Datenstruktur
+
+Diese Seite beschreibt **ausschließlich die Datenstruktur** (kein echter Datensatz).
+
+---
+
+## Entität: Fahrzeug
+
+| Feld | Typ | Pflicht | Beschreibung | Werte |
+|---|---|:---:|---|---|
+| id | integer | ✔ | Eindeutige Fahrzeug-ID | — |
+| marke | string | ✔ | Automarke | — |
+| modell | string | ✔ | Modellbezeichnung | — |
+| baujahr | integer | ✔ | Jahr der Erstzulassung | — |
+| zustand | enum | ✔ | Allgemeiner Zustand | neu, sehr_gut, gut, ok, schlecht |
+| kilometer | integer | ✔ | Kilometerstand (km) | — |
+| motortyp | enum | ✔ | Art des Motors | benzin, diesel, hybrid, elektrisch |
+| farbe | string | ✔ | Fahrzeugfarbe | — |
+| score | integer | ✖ (berechnet) | Bewertungs-Score, abgeleitet aus anderen Feldern | 0–100 |
+
+---
+
+## Logische Hinweise
+
+- **score** ist ein *abgeleitetes Feld*
+- Keine realen Daten
+- Geeignet für Dokumentation, API-Schema oder Fachkonzept
+
+---
+
+## Beispiel (nur Struktur, kein echter Datensatz)
+
+```yaml
+Fahrzeug:
+  id: integer
+  marke: string
+  modell: string
+  baujahr: integer
+  zustand: enum
+  kilometer: integer
+  motortyp: enum
+  farbe: string
+  score: integer (derived)
