@@ -1,79 +1,71 @@
-from flask import Flask, render_template, redirect, url_for, request
+"""CarWatch Flask app.
+
+Backend responsibilities (your part):
+- SQLite database access
+- scraping + upsert pipeline (via CLI commands)
+- scoring pipeline (via CLI commands)
+- search endpoints (HTML + JSON)
+- login/session (minimal)
+
+Run (dev):
+  python app.py
+
+CLI examples:
+  flask --app app init-db
+  flask --app app seed-dev
+  flask --app app scrape --source demo-json --input-file sample_data/demo_listings.json
+  flask --app app score
+"""
+
+from __future__ import annotations
+
 import os 
+from flask import Flask, redirect, url_for
+
 import db
-
-app = Flask(__name__)
-
-app.config.from_mapping(
-    SECRET_KEY='secret_key_just_for_dev_environment',
-    DATABASE=os.path.join(app.instance_path, 'todos.sqlite')
-)
-app.cli.add_command(db.init_db)
-app.teardown_appcontext(db.close_db_con)
-
-@app.route('/')
-def index():
-    return redirect(url_for('lists'))
-
-    # neu hinzugefügt
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-@app.route("/autoliste")
-def autoliste():
-    return render_template("autoliste.html")
-
-@app.route("/profil")
-def profil():
-    return render_template("profil.html")
+import auth
+from auth import bp as auth_bp
+from cars import bp as cars_bp
+from tasks import register_cli
 
 
-@app.route('/lists/')
-def lists():
-    db_con = db.get_db_con()
-    sql_query = 'SELECT * from list ORDER BY name'
-    lists_temp = db_con.execute(sql_query).fetchall()
-    lists = []
-    for list_temp in lists_temp:
-        list = dict(list_temp)
-        sql_query = (
-            'SELECT COUNT(complete) = SUM(complete) '
-            'AS complete FROM todo '
-            f'JOIN todo_list ON list_id={list["id"]} '
-                'AND todo_id=todo.id; '
-        )
-        complete = db_con.execute(sql_query).fetchone()['complete']
-        list['complete'] = complete
-        lists.append(list)
-    if request.args.get('json') is not None:
-        return lists
-    else:
-        return render_template('lists.html', lists=lists)
+def create_app(test_config: dict | None = None) -> Flask:
+    app = Flask(__name__, instance_relative_config=True)
 
-@app.route('/lists/<int:id>')
-def list(id):
-    db_con = db.get_db_con()
-    sql_query_1 = f'SELECT name FROM list WHERE id={id}'
-    sql_query_2 = (
-        'SELECT id, complete, description FROM todo '
-        f'JOIN todo_list ON todo_id=todo.id AND list_id={id} '
-        'ORDER BY id;'
+    # NOTE: For a real deployment, do NOT hardcode the secret key.
+    # Use an environment variable instead.
+    app.config.from_mapping(
+        SECRET_KEY=os.environ.get("CARWATCH_SECRET_KEY", "dev-only-secret"),
+        DATABASE=os.path.join(app.instance_path, "carwatch.sqlite"),
     )
-    list = {}
-    list['name'] = db_con.execute(sql_query_1).fetchone()['name']
-    list['todos'] = db_con.execute(sql_query_2).fetchall()
-    if request.args.get('json') is not None:
-        list['todos'] = [dict(todo) for todo in list['todos']]
-        return list
-    else:
-        return render_template('list.html', list=list)
-@app.route('/insert/sample')
-def run_insert_sample():
-    db.insert_sample()
-    return 'Database flushed and populated with some sample data.'
+    if test_config:
+        app.config.update(test_config)
 
-# Run the app
+    # Ensure instance folder exists
+    try:
+        os.makedirs(app.instance_path, exist_ok=True)
+    except OSError:
+        pass
+
+    # DB lifecycle + init command
+    db.init_app(app)
+
+    # Blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(cars_bp)
+
+    # Auth CLI (create-user)
+    auth.init_app(app)
+
+    # CLI tasks (scrape/score/dev-seed)
+    register_cli(app)
+
+    @app.route("/")
+    def index():
+        return redirect(url_for("cars.autoliste"))
+
+    return app
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    create_app().run(debug=True)

@@ -285,13 +285,13 @@
             </div>
         </div>
 
-        <!-- Das ist nur Optik, kein echtes Login -->
-        <form>
+        <!-- Backend-Login aktiv: POST /login -->
+        <form method="post" action="/login">
             <div class="form-group">
                 <label for="email">E-Mail oder Benutzername</label>
                 <div class="input-wrap">
                     <span class="input-icon">@</span>
-                    <input id="email" type="text" placeholder="z.B. max.mustermann@carwatch.io" autocomplete="off">
+                    <input id="email" name="identifier" type="text" placeholder="z.B. max.mustermann@carwatch.io" autocomplete="off">
                 </div>
             </div>
 
@@ -299,7 +299,7 @@
                 <label for="password">Passwort</label>
                 <div class="input-wrap">
                     <span class="input-icon">• • •</span>
-                    <input id="password" type="password" placeholder="••••••••••" autocomplete="off">
+                    <input id="password" name="password" type="password" placeholder="••••••••••" autocomplete="off">
                 </div>
             </div>
 
@@ -311,12 +311,12 @@
                 <a href="#" class="link">Passwort vergessen?</a>
             </div>
 
-            <button type="button" class="btn-primary">
+            <button type="submit" class="btn-primary">
                 Login
             </button>
 
             <p class="hint">
-                Login ist aktuell <span>nur UI</span>  - keine echte Authentifizierung
+                Login ist aktiv. Falls noch kein User existiert: <span>flask --app app create-user</span>
             </p>
         </form>
 
