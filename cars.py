@@ -16,7 +16,7 @@ from flask import Blueprint, jsonify, render_template, request
 import db
 
 
-bp = Blueprint("cars", __name__)
+cars_bp = Blueprint("cars", __name__)
 
 
 def _parse_int(value: str | None) -> int | None:
@@ -95,7 +95,7 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
     return [dict(r) for r in rows]
 
 
-@bp.route("/autoliste")
+@cars_bp.route("/autoliste")
 def autoliste():
     filters = {
         "brand": (request.args.get("brand") or "").strip() or None,
@@ -121,7 +121,7 @@ def autoliste():
     return render_template("Autoliste.html", listings=listings, filters=filters)
 
 
-@bp.route("/api/listings")
+@cars_bp.route("/api/listings")
 def api_listings():
     # Same filters as /autoliste, always JSON.
     filters = {
@@ -139,7 +139,7 @@ def api_listings():
     return jsonify(search_listings(filters))
 
 
-@bp.route("/api/listings/<int:listing_id>")
+@cars_bp.route("/api/listings/<int:listing_id>")
 def api_listing_detail(listing_id: int):
     row = db.query_one("SELECT * FROM listings WHERE id = ?", (listing_id,))
     if not row:
