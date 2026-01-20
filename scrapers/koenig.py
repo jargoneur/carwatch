@@ -78,7 +78,7 @@ def collect_listing_urls(driver: webdriver.Chrome, wait: WebDriverWait,) -> list
     no_growth_rounds = 0
     MAX_NO_GROWTH = 12         # wenn zu früh stoppt: 18
 
-    while no_growth_rounds < MAX_NO_GROWTH and len(urls) < 100:
+    while no_growth_rounds < MAX_NO_GROWTH :
         cards = driver.find_elements(*VEHICLE_LINKS)
         if not cards:
             # kurz warten, falls die Liste gerade neu lädt
