@@ -22,7 +22,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import db
 
 
-bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__)
 
 T = TypeVar("T")
 
@@ -35,7 +35,7 @@ def _is_email(s: str) -> bool:
     return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", s.strip()))
 
 
-@bp.before_app_request
+@auth_bp.before_app_request
 def load_logged_in_user() -> None:
     user_id = session.get("user_id")
     if user_id is None:
@@ -55,7 +55,7 @@ def login_required(view: Callable[..., T]) -> Callable[..., T]:
     return wrapped_view  # type: ignore[return-value]
 
 
-@bp.route("/login", methods=("GET", "POST"))
+@auth_bp.route("/login", methods=("GET", "POST"))
 def login():
     # Templates in repo are capitalized.
     # If you rename them, update here.
@@ -85,13 +85,13 @@ def login():
     return redirect(next_url or url_for("cars.autoliste"))
 
 
-@bp.route("/logout")
+@auth_bp.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))
 
 
-@bp.route("/profil")
+@auth_bp.route("/profil")
 @login_required
 def profil():
     # This template is currently static UI; we still pass user for future use.
