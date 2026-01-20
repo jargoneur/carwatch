@@ -24,8 +24,8 @@ from flask import Flask, redirect, url_for
 
 import db
 import auth
-from auth import bp as auth_bp
-from cars import bp as cars_bp
+from auth import auth_bp as auth_bp
+from cars import cars_bp as cars_bp
 from tasks import register_cli
 
 
