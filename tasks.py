@@ -116,12 +116,24 @@ def register_cli(app: Flask) -> None:
     @app.cli.command("scrape")
     @click.option("--source", default="demo-json", show_default=True, help="Scraper type.")
     @click.option(
+        "--headless/--no-headless",
+        default=True,
+        show_default=True,
+        help="Run browser headless (used by selenium sources).",
+    )
+    @click.option(
+        "--user-data-dir",
+        default=None,
+        show_default=False,
+        help="Optional Chrome user-data-dir profile path (selenium sources).",
+    )
+    @click.option(
         "--input-file",
         type=click.Path(dir_okay=False, path_type=Path),
         required=False,
         help="Used by demo-json scraper: JSON file with a list of listings.",
     )
-    def scrape_cmd(source: str, input_file: Path | None) -> None:
+    def scrape_cmd(source: str, headless: bool, user_data_dir: str | None, input_file: Path | None) -> None:
         """Run a scraping job.
 
         For now, only a 'demo-json' source is implemented so you can test the
@@ -130,29 +142,51 @@ def register_cli(app: Flask) -> None:
 
         con = db.get_db_con()
 
-        if source != "demo-json":
-            raise click.ClickException(
-                "Only source=demo-json is implemented in this starter. "
-                "Add real scrapers in a separate module (requests+bs4 / playwright)."
-            )
-        if input_file is None:
-            raise click.ClickException("--input-file is required for source=demo-json")
-        if not input_file.exists():
-            raise click.ClickException(f"input file not found: {input_file}")
-
-        items: list[dict[str, Any]] = json.loads(input_file.read_text(encoding="utf-8"))
-        if not isinstance(items, list):
-            raise click.ClickException("JSON must be a list of listing objects")
-
         inserted = 0
         updated = 0
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            action = upsert_listing(con, item)
-            inserted += 1 if action == "inserted" else 0
-            updated += 1 if action == "updated" else 0
-        click.echo(f"scrape: inserted={inserted} updated={updated} from {input_file}")
+
+        if source == "demo-json":
+            if input_file is None:
+                raise click.ClickException("--input-file is required for source=demo-json")
+            if not input_file.exists():
+                raise click.ClickException(f"input file not found: {input_file}")
+
+            items: list[dict[str, Any]] = json.loads(input_file.read_text(encoding="utf-8"))
+            if not isinstance(items, list):
+                raise click.ClickException("JSON must be a list of listing objects")
+
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                action = upsert_listing(con, item)
+                inserted += 1 if action == "inserted" else 0
+                updated += 1 if action == "updated" else 0
+            click.echo(f"scrape: inserted={inserted} updated={updated} from {input_file}")
+            return
+
+        if source == "koenig":
+            # Import lazily so demo-json users don't need selenium installed.
+            from scrapers.koenig import iter_koenig_listings
+
+            failed = 0
+            for item in iter_koenig_listings( headless=headless, user_data_dir=user_data_dir):
+                try:
+                    action = upsert_listing(con, item)
+                    inserted += 1 if action == "inserted" else 0
+                    updated += 1 if action == "updated" else 0
+                except Exception as e:
+                    failed += 1
+                    url = item.get("url") if isinstance(item, dict) else None
+                    click.echo(f"koenig: failed url={url} err={e}")
+
+            click.echo(
+                f"scrape(koenig): inserted={inserted} updated={updated} failed={failed} headless={headless}"
+            )
+            return
+
+        raise click.ClickException(
+            "Unknown source. Supported: demo-json, koenig"
+        )
 
     @app.cli.command("score")
     @click.option("--version", default="percentile_v1", show_default=True)

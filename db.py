@@ -1,11 +1,4 @@
-"""SQLite helpers for CarWatch.
 
-We intentionally keep it lightweight (no ORM) so you can:
-- see/understand every SQL statement
-- keep the project portable (SQLite file in Flask's instance folder)
-
-If you later want SQLAlchemy, you can migrate gradually.
-"""
 
 from __future__ import annotations
 
