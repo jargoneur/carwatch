@@ -101,7 +101,7 @@ def profil():
 @click.command("create-user")
 @click.option("--username", prompt=True)
 @click.option("--email", prompt=True)
-@click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
+@click.option("--password", prompt=True)
 def create_user_cmd(username: str, email: str, password: str):
     username_n = _normalize_username(username)
     email_n = email.strip().lower()

@@ -62,7 +62,7 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     @app.route("/")
     def index():
-        return redirect(url_for("cars.autoliste"))
+        return redirect(url_for("auth.login"))
 
     return app
 

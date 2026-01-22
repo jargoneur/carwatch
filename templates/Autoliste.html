@@ -627,77 +627,78 @@
                 <div class="topbar-badge">
                     Demo-Modus · v0.1
                 </div>
-                <!-- Profil-Symbol: später auf Konto verlinken -->
-                <div class="profile-icon" title="Profil / Konto">
+                <!-- Profil-Symbol: verlinkt zur Profilseite -->
+                <a href="{{ url_for('auth.profil') }}" class="profile-icon" title="Profil / Konto">
                     U
-                </div>
+                </a>
             </div>
         </header>
 
         <!-- Such- und Filterpanel -->
         <section class="panel">
-            <div class="panel-header">
-                <div>
-                    <div class="panel-header-title">Fahrzeuge suchen</div>
-                    <div class="panel-header-sub">
-                        Einfach nach Marke, Modell, Kennzeichen oder interner ID suchen
+            <form method="get" action="{{ url_for('cars.autoliste') }}">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-header-title">Fahrzeuge suchen</div>
+                        <div class="panel-header-sub">
+                            Einfach nach Marke, Modell, Kennzeichen oder interner ID suchen
+                        </div>
                     </div>
-                </div>
-                <button type="button" class="btn-secondary">
-                    <span class="icon">↻</span>
-                    Filter zurücksetzen
-                </button>
-            </div>
-
-            <div class="search-row">
-                <div class="search-input-wrap">
-                    <span class="search-icon">🔍</span>
-                    <input class="search-input" type="text" placeholder="Suche nach Fahrzeug (z.B. &quot;Golf&quot;, &quot;B-Klasse&quot;, &quot;DE-AB 1234&quot;)">
-                </div>
-                <button type="button" class="btn-secondary">
-                    <span class="icon">🔎</span>
-                    Suche anwenden (UI)
-                </button>
-            </div>
-
-            <!-- Filter im Grid -->
-            <div class="filters-grid">
-                <div class="field">
-                    <label for="filter-baujahr">Baujahr (ab)</label>
-                    <input id="filter-baujahr" type="number" placeholder="z.B. 2015">
+                    <a href="{{ url_for('cars.autoliste') }}" class="btn-secondary">
+                        <span class="icon">↻</span>
+                        Filter zurücksetzen
+                    </a>
                 </div>
 
-                <div class="field">
-                    <label for="filter-km-max">Kilometer (max)</label>
-                    <input id="filter-km-max" type="number" placeholder="z.B. 120000">
-                </div>
-
-                <div class="field">
-                    <label for="filter-halter">Halteranzahl (max)</label>
-                    <input id="filter-halter" type="number" placeholder="z.B. 2">
-                </div>
-
-                <div class="field">
-                    <label>Unfallfreiheit</label>
-                    <div class="field-inline">
-                        <input id="filter-unfallfrei" type="checkbox">
-                        <label for="filter-unfallfrei">Nur unfallfreie Fahrzeuge</label>
+                <div class="search-row">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input class="search-input" type="text" name="q" placeholder="Suche nach Fahrzeug (z.B. &quot;Golf&quot;, &quot;B-Klasse&quot;, &quot;DE-AB 1234&quot;)" value="{{ filters.q or '' }}">
                     </div>
+                    <button type="submit" class="btn-secondary">
+                        <span class="icon">🔎</span>
+                        Suche anwenden
+                    </button>
                 </div>
 
-                <div class="field">
-                    <label for="filter-marke">Marke</label>
-                    <input id="filter-marke" type="text" placeholder="z.B. BMW, VW, Tesla">
-                </div>
+                <!-- Filter im Grid -->
+                <div class="filters-grid">
+                    <div class="field">
+                        <label for="filter-baujahr">Baujahr (ab)</label>
+                        <input id="filter-baujahr" type="text" name="year_min" placeholder="z.B. 2015" value="{{ filters.year_min or '' }}">
+                    </div>
 
-                <div class="field">
-                    <label for="filter-modell">Modell</label>
-                    <input id="filter-modell" type="text" placeholder="z.B. 3er, Golf, Model 3">
-                </div>
+                    <div class="field">
+                        <label for="filter-km-max">Kilometer (max)</label>
+                        <input id="filter-km-max" type="number" name="km_max" step="5000" placeholder="z.B. 120000" value="{{ filters.km_max or '' }}">
+                    </div>
 
-                <div class="field">
-                    <label for="filter-farbe">Farbe</label>
-                    <input id="filter-farbe" type="text" placeholder="z.B. schwarz, metallic-blau">
+                    <div class="field">
+                        <label for="filter-halter">Halteranzahl (max)</label>
+                        <input id="filter-halter" type="number" placeholder="z.B. 2">
+                    </div>
+
+                    <div class="field">
+                        <label>Unfallfreiheit</label>
+                        <div class="field-inline">
+                            <input id="filter-unfallfrei" type="checkbox">
+                            <label for="filter-unfallfrei">Nur unfallfreie Fahrzeuge</label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="filter-marke">Marke</label>
+                        <input id="filter-marke" type="text" name="brand" placeholder="z.B. BMW, VW, Tesla" value="{{ filters.brand or '' }}">
+                    </div>
+
+                    <div class="field">
+                        <label for="filter-modell">Modell</label>
+                        <input id="filter-modell" type="text" name="model" placeholder="z.B. 3er, Golf, Model 3" value="{{ filters.model or '' }}">
+                    </div>
+
+                    <div class="field">
+                        <label for="filter-farbe">Farbe</label>
+                        <input id="filter-farbe" type="text" placeholder="z.B. schwarz, metallic-blau">
                 </div>
 
                 <div class="field">
@@ -726,12 +727,12 @@
 
                 <div class="field">
                     <label for="filter-sortierung">Sortierung</label>
-                    <select id="filter-sortierung">
-                        <option value="neueste">Neueste zuerst</option>
-                        <option value="km-aufsteigend">Kilometer aufsteigend</option>
-                        <option value="km-absteigend">Kilometer absteigend</option>
-                        <option value="baujahr-absteigend">Neuere Baujahre zuerst</option>
-                        <option value="baujahr-aufsteigend">Ältere Baujahre zuerst</option>
+                    <select id="filter-sortierung" name="sort">
+                        <option value="seen_desc" {% if filters.sort == 'seen_desc' %}selected{% endif %}>Neueste zuerst</option>
+                        <option value="km_asc" {% if filters.sort == 'km_asc' %}selected{% endif %}>Kilometer aufsteigend</option>
+                        <option value="km_desc" {% if filters.sort == 'km_desc' %}selected{% endif %}>Kilometer absteigend</option>
+                        <option value="year_desc" {% if filters.sort == 'year_desc' %}selected{% endif %}>Neuere Baujahre zuerst</option>
+                        <option value="year_asc" {% if filters.sort == 'year_asc' %}selected{% endif %}>Ältere Baujahre zuerst</option>
                     </select>
                 </div>
 
@@ -742,144 +743,70 @@
 
                 <div class="field">
                     <label>&nbsp;</label>
-                    <button type="button" class="btn-secondary">
+                    <button type="submit" class="btn-secondary">
                         <span class="icon">⚙</span>
-                        Filter (nur UI)
+                        Filter anwenden
                     </button>
                 </div>
             </div>
+            </form>
         </section>
 
-        <!-- Listensektion: zuletzt hinzugefügt und oft aufgerufen -->
+        <!-- Listensektion: Fahrzeuge aus der Datenbank -->
         <section class="content-rows">
-            <!-- Links: Zuletzt hinzugefügte Fahrzeuge -->
+            <!-- Links: Fahrzeuge -->
             <div>
                 <div class="cards-section-title">
-                    <span>Zuletzt hinzugefügte Fahrzeuge</span>
-                    <span class="cards-section-sub">Mock-Daten · nur Optik, keine echte Datenquelle</span>
+                    <span>Fahrzeuge</span>
+                    <span class="cards-section-sub">{% if listings %}{{ listings|length }} Fahrzeuge gefunden{% else %}Keine Fahrzeuge gefunden{% endif %}</span>
                 </div>
 
                 <div class="cars-grid">
-                    <!-- Beispielkarte 1 -->
+                    {% for car in listings %}
                     <article class="car-card">
                         <div class="car-card-header">
                             <div>
-                                <div class="car-title-main">BMW 320d Touring</div>
-                                <div class="car-title-sub">Baujahr 2019 · Diesel · Automatik</div>
+                                <div class="car-title-main">{{ car.brand or 'Unbekannt' }} {% if car.model %}{{ car.model }}{% endif %}</div>
+                                <div class="car-title-sub">Baujahr {{ car.year or 'N/A' }} · {{ car.fuel_type or 'N/A' }} · {{ car.transmission or 'N/A' }}</div>
                             </div>
-                            <div class="car-badge">DE-FL 3209</div>
+                            <div class="car-badge">{{ car.plate or '—' }}</div>
                         </div>
 
                         <div class="car-meta">
                             <div class="car-meta-item">
                                 <div class="car-meta-label">Kilometer</div>
-                                <div class="car-meta-value">78.500 km</div>
+                                <div class="car-meta-value">{{ car.mileage_km if car.mileage_km is not none else 'N/A' }} km</div>
                             </div>
                             <div class="car-meta-item">
                                 <div class="car-meta-label">Halter</div>
-                                <div class="car-meta-value">1</div>
+                                <div class="car-meta-value">{{ car.num_owners if (car.num_owners is defined and car.num_owners is not none) else 'N/A' }}</div>
                             </div>
                             <div class="car-meta-item">
                                 <div class="car-meta-label">Unfall</div>
-                                <div class="car-meta-value">Kein Unfallauto</div>
+                                <div class="car-meta-value">{% if car.accident %}Unfall vermerkt{% else %}Kein Unfallauto{% endif %}</div>
                             </div>
                         </div>
 
                         <div class="car-tags">
-                            <span class="car-tag">Farbe: Alpinweiß</span>
-                            <span class="car-tag">Getriebe: Automatik</span>
-                            <span class="car-tag">Kraftstoff: Diesel</span>
+                            {% if car.color %}<span class="car-tag">Farbe: {{ car.color }}</span>{% endif %}
+                            {% if car.transmission %}<span class="car-tag">Getriebe: {{ car.transmission }}</span>{% endif %}
+                            {% if car.fuel_type %}<span class="car-tag">Kraftstoff: {{ car.fuel_type }}</span>{% endif %}
                         </div>
 
                         <div class="car-footer">
-                            <span>Hinzugefügt vor 2 Tagen</span>
+                            <span>ID: {{ car.id or car.get('id') or '—' }}</span>
                             <div class="car-footer-right">
-                                <span class="pill-soft pill-accent">Live überwacht</span>
-                                <span class="pill-soft">3x aufgerufen</span>
+                                <span class="pill-soft">Score: {{ car.score if car.score is not none else 'N/A' }}</span>
                             </div>
                         </div>
                     </article>
+                    {% endfor %}
 
-                    <!-- Beispielkarte 2 -->
-                    <article class="car-card">
-                        <div class="car-card-header">
-                            <div>
-                                <div class="car-title-main">VW Golf 7 1.4 TSI</div>
-                                <div class="car-title-sub">Baujahr 2017 · Benzin · Schalter</div>
-                            </div>
-                            <div class="car-badge">DE-VW 7714</div>
-                        </div>
-
-                        <div class="car-meta">
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Kilometer</div>
-                                <div class="car-meta-value">112.300 km</div>
-                            </div>
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Halter</div>
-                                <div class="car-meta-value">2</div>
-                            </div>
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Unfall</div>
-                                <div class="car-meta-value">leichter Schaden i.V.</div>
-                            </div>
-                        </div>
-
-                        <div class="car-tags">
-                            <span class="car-tag">Farbe: Deep Black Pearl</span>
-                            <span class="car-tag">Getriebe: Schalter</span>
-                            <span class="car-tag">Kraftstoff: Benzin</span>
-                        </div>
-
-                        <div class="car-footer">
-                            <span>Hinzugefügt vor 5 Tagen</span>
-                            <div class="car-footer-right">
-                                <span class="pill-soft">1x gespeichert</span>
-                                <span class="pill-soft">5x aufgerufen</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Beispielkarte 3 -->
-                    <article class="car-card">
-                        <div class="highlight-flag">EV Fleet</div>
-                        <div class="car-card-header">
-                            <div>
-                                <div class="car-title-main">Tesla Model 3 Long Range</div>
-                                <div class="car-title-sub">Baujahr 2022 · Elektro · Automatik</div>
-                            </div>
-                            <div class="car-badge">EV-TM 3001</div>
-                        </div>
-
-                        <div class="car-meta">
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Kilometer</div>
-                                <div class="car-meta-value">24.900 km</div>
-                            </div>
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Halter</div>
-                                <div class="car-meta-value">1</div>
-                            </div>
-                            <div class="car-meta-item">
-                                <div class="car-meta-label">Unfall</div>
-                                <div class="car-meta-value">Kein Unfallauto</div>
-                            </div>
-                        </div>
-
-                        <div class="car-tags">
-                            <span class="car-tag">Farbe: Midnight Silver</span>
-                            <span class="car-tag">Kraftstoff: Elektro</span>
-                            <span class="car-tag">Autopilot aktiviert</span>
-                        </div>
-
-                        <div class="car-footer">
-                            <span>Hinzugefügt vor 7 Tagen</span>
-                            <div class="car-footer-right">
-                                <span class="pill-soft pill-accent">High Priority</span>
-                                <span class="pill-soft">9x aufgerufen</span>
-                            </div>
-                        </div>
-                    </article>
+                    {% if not listings %}
+                    <div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">
+                        <p>Keine Fahrzeuge gefunden. Versuchen Sie, Ihre Filter anzupassen.</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

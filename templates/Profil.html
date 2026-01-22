@@ -533,12 +533,11 @@
                 </div>
 
                 <div class="profile-header">
-                    <div class="profile-avatar">U</div>
+                    <div class="profile-avatar">{{ user.username[0].upper() if user else 'U' }}</div>
                     <div class="profile-info-main">
-                        <div class="profile-name">Max Mustermann</div>
+                        <div class="profile-name">{{ user.username if user else 'Nicht angemeldet' }}</div>
                         <div class="profile-meta">
-                            <span>ID: CW-USER-0123</span>
-                            <span>angemeldet als Demo</span>
+                            <span>E-Mail: {{ user.email if user else 'N/A' }}</span>
                         </div>
                     </div>
                 </div>

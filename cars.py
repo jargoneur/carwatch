@@ -36,6 +36,7 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
 
     brand = filters.get("brand")
     model = filters.get("model")
+    q = filters.get("q")
     year_min = filters.get("year_min")
     year_max = filters.get("year_max")
     km_min = filters.get("km_min")
@@ -54,6 +55,11 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
     if brand:
         sql += " AND brand = ?"
         params.append(brand)
+    if q:
+        # simple text search across common text columns
+        sql += " AND (brand LIKE ? OR model LIKE ? OR title LIKE ? OR variant LIKE ? )"
+        like = f"%{q}%"
+        params.extend([like, like, like, like])
     if model:
         sql += " AND model = ?"
         params.append(model)
@@ -99,6 +105,7 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
 def autoliste():
     filters = {
         "brand": (request.args.get("brand") or "").strip() or None,
+        "q": (request.args.get("q") or "").strip() or None,
         "model": (request.args.get("model") or "").strip() or None,
         "year_min": _parse_int(request.args.get("year_min")),
         "year_max": _parse_int(request.args.get("year_max")),
@@ -111,6 +118,27 @@ def autoliste():
     }
 
     listings = search_listings(filters)
+    # If no results from search, show a few random listings from DB as fallback
+    if not listings:
+        # Prefer random listings that came from the 'koenig' scraper and are active
+        rows = db.query_all(
+            "SELECT id, source, url, title, brand, model, variant, year, mileage_km, "
+            "price_eur, fuel_type, transmission, color, accident, condition, score "
+            "FROM listings WHERE source = ? AND is_active = 1 ORDER BY RANDOM() LIMIT 12",
+            ("koenig",),
+        )
+        listings = [dict(r) for r in rows]
+
+        # If not enough koenig listings, fill with other active listings (avoid duplicates)
+        if len(listings) < 12:
+            remaining = 12 - len(listings)
+            rows = db.query_all(
+                "SELECT id, source, url, title, brand, model, variant, year, mileage_km, "
+                "price_eur, fuel_type, transmission, color, accident, condition, score "
+                "FROM listings WHERE is_active = 1 AND source != ? ORDER BY RANDOM() LIMIT ?",
+                ("koenig", remaining),
+            )
+            listings.extend([dict(r) for r in rows])
 
     # Debug-friendly: /autoliste?json=1 returns JSON
     if request.args.get("json") is not None:
@@ -118,7 +146,9 @@ def autoliste():
 
     # The current Autoliste.html is a static mock. We still pass the data,
     # so your frontend partner can plug it in with Jinja loops.
-    return render_template("Autoliste.html", listings=listings, filters=filters)
+    from datetime import datetime
+    current_year = datetime.now().year
+    return render_template("Autoliste.html", listings=listings, filters=filters, current_year=current_year)
 
 
 @cars_bp.route("/api/listings")
