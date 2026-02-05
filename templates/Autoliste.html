@@ -589,17 +589,13 @@
                     <span class="icon">⮌</span>
                     <span>Zurück zum Login</span>
                 </a>
-                <a href="/autoliste" class="sidebar-link active">
+                <a href="/autoliste" class="sidebar-link {% if not request.args.get('saved') %}active{% endif %}">
                     <span class="icon">🚗</span>
                     <span>Fahrzeuge</span>
                 </a>
-                <a href="#" class="sidebar-link">
+                <a href="/autoliste?saved=1" class="sidebar-link {% if request.args.get('saved') %}active{% endif %}">
                     <span class="icon">★</span>
                     <span>Gespeicherte Fahrzeuge</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <span class="icon">⏱</span>
-                    <span>Zuletzt gesehen</span>
                 </a>
                 <a href="#" class="sidebar-link">
                     <span class="icon">⚙</span>
@@ -763,13 +759,21 @@
 
                 <div class="cars-grid">
                     {% for car in listings %}
+                    <a href="{{ car.url }}" target="_blank" style="text-decoration: none; color: inherit;">
                     <article class="car-card">
                         <div class="car-card-header">
                             <div>
                                 <div class="car-title-main">{{ car.brand or 'Unbekannt' }} {% if car.model %}{{ car.model }}{% endif %}</div>
                                 <div class="car-title-sub">Baujahr {{ car.year or 'N/A' }} · {{ car.fuel_type or 'N/A' }} · {{ car.transmission or 'N/A' }}</div>
                             </div>
-                            <div class="car-badge">{{ car.plate or '—' }}</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <form method="post" action="{{ url_for('cars.save_car', listing_id=car.id) }}" style="display:inline;">
+                                    <button type="submit" title="Fahrzeug speichern/entfernen" style="background: none; border: none; cursor: pointer; font-size: 18px; color: gold; padding: 0;">
+                                        {% if saved_ids and car.id in saved_ids %}★{% else %}☆{% endif %}
+                                    </button>
+                                </form>
+                                <div class="car-badge">{{ car.plate or '—' }}</div>
+                            </div>
                         </div>
 
                         <div class="car-meta">
@@ -800,6 +804,7 @@
                             </div>
                         </div>
                     </article>
+                    </a>
                     {% endfor %}
 
                     {% if not listings %}

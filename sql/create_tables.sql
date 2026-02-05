@@ -1,3 +1,12 @@
+-- Gespeicherte Autos pro User
+CREATE TABLE IF NOT EXISTS saved_cars (
+    user_id INTEGER NOT NULL,
+    listing_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    PRIMARY KEY (user_id, listing_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
+);
 BEGIN TRANSACTION;
 
 -- Users for login
