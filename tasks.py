@@ -28,7 +28,7 @@ from upsert import upsert_listing
 
 
 def register_cli(app: Flask) -> None:
-    """Register custom CLI commands on the app."""
+    """Register custom CLI commands for scraping, scoring, and dev seeding."""
 
     @app.cli.command("seed-dev")
     def seed_dev_cmd() -> None:
@@ -114,7 +114,11 @@ def register_cli(app: Flask) -> None:
         click.echo(f"seed-dev: inserted={inserted} updated={updated}")
 
     @app.cli.command("scrape")
-    @click.option("--source", default="demo-json", show_default=True, help="Scraper type.")
+    @click.option("--source",
+        default="demo-json",
+        show_default=True,
+        help="Scraper type."
+        )
     @click.option(
         "--headless/--no-headless",
         default=True,
@@ -133,11 +137,18 @@ def register_cli(app: Flask) -> None:
         required=False,
         help="Used by demo-json scraper: JSON file with a list of listings.",
     )
-    def scrape_cmd(source: str, headless: bool, user_data_dir: str | None, input_file: Path | None) -> None:
+    @click.option(
+        "--limit",
+        default=None,
+        type=int,
+        help="Optional limit for number of listings to scrape (for testing).",
+    )
+    def scrape_cmd(source: str, headless: bool, user_data_dir: str, limit:int | None, input_file: Path | None) -> None:
         """Run a scraping job.
 
-        For now, only a 'demo-json' source is implemented so you can test the
-        full pipeline without scraping real websites.
+        Supported sources:
+        - demo-json: reads listings from a JSON file (used for testing)
+        - koenig: scrapes https://www.autohaus-koenig.de/ (requires ChromeDriver and Selenium)
         """
 
         con = db.get_db_con()
@@ -165,11 +176,10 @@ def register_cli(app: Flask) -> None:
             return
 
         if source == "koenig":
-            # Import lazily so demo-json users don't need selenium installed.
             from scrapers.koenig import iter_koenig_listings
 
             failed = 0
-            for item in iter_koenig_listings( headless=headless, user_data_dir=user_data_dir):
+            for item in iter_koenig_listings( headless=headless, user_data_dir=user_data_dir, limit=limit):
                 try:
                     action = upsert_listing(con, item)
                     inserted += 1 if action == "inserted" else 0

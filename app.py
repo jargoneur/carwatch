@@ -1,11 +1,4 @@
-"""CarWatch Flask app.
-
-Backend responsibilities (your part):
-- SQLite database access
-- scraping + upsert pipeline (via CLI commands)
-- scoring pipeline (via CLI commands)
-- search endpoints (HTML + JSON)
-- login/session (minimal)
+"""
 
 Run (dev):
   python app.py

@@ -27,7 +27,7 @@ def make_driver(*, headless: bool, user_data_dir: str | None) -> webdriver.Chrom
 def human_sleep(a=0.6, b=1.2):
     time.sleep(random.uniform(a, b))
 
-def collect_listing_urls(driver: webdriver.Chrome, wait: WebDriverWait,) -> list[str]:
+def collect_listing_urls(driver: webdriver.Chrome, wait: WebDriverWait,limit: int) -> list[str]:
     driver.get('https://www.autohaus-koenig.de/')
     human_sleep(2.0, 4.0)
     gebrauchtwagen = driver.find_element(By.CSS_SELECTOR, "button[aria-controls='sub-menu-2']")
@@ -78,7 +78,7 @@ def collect_listing_urls(driver: webdriver.Chrome, wait: WebDriverWait,) -> list
     no_growth_rounds = 0
     MAX_NO_GROWTH = 12         # wenn zu früh stoppt: 18
 
-    while no_growth_rounds < MAX_NO_GROWTH :
+    while no_growth_rounds < MAX_NO_GROWTH and (limit is None or len(urls) < limit):
         cards = driver.find_elements(*VEHICLE_LINKS)
         if not cards:
             # kurz warten, falls die Liste gerade neu lädt
@@ -363,7 +363,7 @@ def normalize_koenig(flat: dict[str, Any], url: str) -> dict[str, Any]:
         "raw_json": flat,
     }
 
-def iter_koenig_listings(*, headless: bool = True, user_data_dir: str | None = None) -> Generator[dict[str, Any], None, None]:
+def iter_koenig_listings(*, headless: bool = True, user_data_dir: str, limit: int| None = None) -> Generator[dict[str, Any], None, None]:
    
     if user_data_dir is None:
         project_root = Path(__file__).resolve().parents[1]
@@ -373,7 +373,7 @@ def iter_koenig_listings(*, headless: bool = True, user_data_dir: str | None = N
     wait = WebDriverWait(driver, 20)
 
     try:
-        urls = collect_listing_urls(driver, wait)
+        urls = collect_listing_urls(driver, wait,limit=limit)
         i=0
         for url in urls:
             i+=1

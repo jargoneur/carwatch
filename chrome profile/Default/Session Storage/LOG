@@ -1,3 +1,15 @@
-2026/01/22-11:19:04.121 4bc4 Reusing MANIFEST C:\Users\Den\carwatch\chrome profile\Default\Session Storage/MANIFEST-000001
-2026/01/22-11:19:04.123 4bc4 Recovering log #65
-2026/01/22-11:19:04.129 4bc4 Reusing old log C:\Users\Den\carwatch\chrome profile\Default\Session Storage/000065.log 
+2026/02/06-19:39:52.802 76a4 Reusing MANIFEST C:\Users\Den\carwatch\chrome profile\Default\Session Storage/MANIFEST-000001
+2026/02/06-19:39:52.803 76a4 Recovering log #65
+2026/02/06-19:39:52.806 76a4 Reusing old log C:\Users\Den\carwatch\chrome profile\Default\Session Storage/000065.log 
+2026/02/06-20:06:08.048 1978 Level-0 table #67: started
+2026/02/06-20:06:08.056 1978 Level-0 table #67: 17449 bytes OK
+2026/02/06-20:06:08.059 1978 Delete type=0 #65
+2026/02/06-20:21:54.361 76a4 Level-0 table #69: started
+2026/02/06-20:21:54.367 76a4 Level-0 table #69: 17657 bytes OK
+2026/02/06-20:21:54.370 76a4 Delete type=0 #66
+2026/02/06-20:50:54.357 76a4 Level-0 table #71: started
+2026/02/06-20:50:54.361 76a4 Level-0 table #71: 17719 bytes OK
+2026/02/06-20:50:54.363 76a4 Delete type=0 #68
+2026/02/06-21:19:54.360 76a4 Level-0 table #73: started
+2026/02/06-21:19:54.366 76a4 Level-0 table #73: 17692 bytes OK
+2026/02/06-21:19:54.369 76a4 Delete type=0 #70

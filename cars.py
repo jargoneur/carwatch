@@ -11,12 +11,20 @@ from __future__ import annotations
 
 from typing import Any
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, abort, g, jsonify, redirect, render_template, request, url_for
 
 import db
+from auth import login_required
 
 
 cars_bp = Blueprint("cars", __name__)
+
+
+@cars_bp.before_request
+def require_login_for_cars() -> Any:
+    if g.get("user") is None:
+        return redirect(url_for("auth.login", next=request.path))
+    return None
 
 
 def _parse_int(value: str | None) -> int | None:
@@ -42,7 +50,8 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
     km_min = filters.get("km_min")
     km_max = filters.get("km_max")
     score_min = filters.get("score_min")
-    sort = filters.get("sort") or "score_desc"
+    sort = filters.get("sort") or "price_asc"
+    saved_ids = filters.get("saved_ids")
 
     sql = (
         "SELECT id, source, url, title, brand, model, variant, year, mileage_km, "
@@ -78,6 +87,12 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
     if score_min is not None:
         sql += " AND score >= ?"
         params.append(score_min)
+    if saved_ids is not None:
+        if not saved_ids:
+            return []
+        placeholders = ",".join(["?"] * len(saved_ids))
+        sql += f" AND id IN ({placeholders})"
+        params.extend(saved_ids)
 
     sort_map = {
         "score_desc": "score DESC NULLS LAST, price_eur ASC",
@@ -102,7 +117,21 @@ def search_listings(filters: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 @cars_bp.route("/autoliste")
+@login_required
 def autoliste():
+    user_id = g.user["id"] if g.get("user") else None
+    saved_ids: list[int] = []
+    if user_id is not None:
+        saved_rows = db.query_all(
+            "SELECT listing_id FROM saved_cars WHERE user_id = ?",
+            (user_id,),
+        )
+        saved_ids = [int(r["listing_id"]) for r in saved_rows]
+
+    saved_only = request.args.get("saved") is not None
+    if saved_only and user_id is None:
+        return redirect(url_for("auth.login", next=request.path))
+
     filters = {
         "brand": (request.args.get("brand") or "").strip() or None,
         "q": (request.args.get("q") or "").strip() or None,
@@ -116,10 +145,12 @@ def autoliste():
         "limit": _parse_int(request.args.get("limit")) or 50,
         "offset": _parse_int(request.args.get("offset")) or 0,
     }
+    if saved_only:
+        filters["saved_ids"] = saved_ids
 
     listings = search_listings(filters)
     # If no results from search, show a few random listings from DB as fallback
-    if not listings:
+    if not listings and not saved_only:
         # Prefer random listings that came from the 'koenig' scraper and are active
         rows = db.query_all(
             "SELECT id, source, url, title, brand, model, variant, year, mileage_km, "
@@ -148,7 +179,39 @@ def autoliste():
     # so your frontend partner can plug it in with Jinja loops.
     from datetime import datetime
     current_year = datetime.now().year
-    return render_template("Autoliste.html", listings=listings, filters=filters, current_year=current_year)
+    return render_template(
+        "Autoliste.html",
+        listings=listings,
+        filters=filters,
+        current_year=current_year,
+        saved_ids=saved_ids,
+    )
+
+
+@cars_bp.post("/autoliste/save/<int:listing_id>")
+@login_required
+def save_car(listing_id: int):
+    user_id = g.user["id"]
+    exists = db.query_one("SELECT 1 FROM listings WHERE id = ?", (listing_id,))
+    if not exists:
+        abort(404)
+
+    saved = db.query_one(
+        "SELECT 1 FROM saved_cars WHERE user_id = ? AND listing_id = ?",
+        (user_id, listing_id),
+    )
+    if saved:
+        db.execute(
+            "DELETE FROM saved_cars WHERE user_id = ? AND listing_id = ?",
+            (user_id, listing_id),
+        )
+    else:
+        db.execute(
+            "INSERT OR IGNORE INTO saved_cars (user_id, listing_id) VALUES (?, ?)",
+            (user_id, listing_id),
+        )
+
+    return redirect(request.referrer or url_for("cars.autoliste"))
 
 
 @cars_bp.route("/api/listings")
