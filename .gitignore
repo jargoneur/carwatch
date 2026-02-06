@@ -121,3 +121,9 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Local Chrome/Edge profile data (can contain locked DBs like Cookies)
+chrome profile/
+
+# Windows noise
+Thumbs.db
+Desktop.ini
