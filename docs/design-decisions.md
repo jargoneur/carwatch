@@ -20,3 +20,13 @@ nav_order: 4
 - Selbstständiges Scraping nicht als separate Seite integriert, da es zu langen Wartezeiten und dem Gefühl eines „hängenden Browsers“ führte.
 - Diskutiert: Scrape-Button mit farbiger Statusanzeige **oder** automatisierter Start mit Ausgabe in einem hypothetischen Server-Zustandsblock. Beides für spätere Versionen.
 - Interface orientiert sich an bestehenden Formatvorlagen, um den Designaufwand zu reduzieren.
+
+
+## Filter 
+
+- Filter werden umgesetzt, um konsistente Ergebnisse und bessere Performance zu gewährleisten
+- Beschränkung auf wenige, relevante Filter, um Komplexität und Fehlbedienung zu vermeiden
+
+## Layout der Autoliste-Seite
+- Klare, reduzierte Darstellung der Listings mit Fokus auf Preis, Eckdaten und Score
+- Responsives Layout, optimiert für Desktop
