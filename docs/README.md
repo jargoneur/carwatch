@@ -103,5 +103,3 @@ Auth is intentionally minimal.
 ## License
 Private / internal use only (update if needed).
 ```
-
-If you want, tell me where you want this saved and I’ll place it there.
