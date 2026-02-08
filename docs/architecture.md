@@ -11,18 +11,12 @@ Dieses Diagramm zeigt die Hauptbausteine (Flask App, Scraping, Scorer, Database)
 
 ## Diagramm (empfohlen: als SVG einbetten)
 
-> **Warum SVG?** GitHub Pages rendert `.puml`/`.drawio` nicht „von selbst“. SVG wird zuverlässig im Browser angezeigt.
-
-1. Exportiere dein Diagramm als **SVG** nach: `docs/assets/img/architecture.svg`
-2. Dann wird es hier automatisch angezeigt:
 
 ![Architecture diagram]({{ site.baseurl }}/assets/img/architecture.svg)
 
 ---
 
 ## Roh-Quelle (PlantUML)
-
-Falls du das Diagramm später wieder rendern willst, ist hier die PlantUML-Quelle:
 
 ```plantuml
 @startuml
