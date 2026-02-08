@@ -7,7 +7,7 @@ nav_order: 8
 
 - Technische Orientierung an bestehenden Auto-Marktplätzen und Vergleichsplattformen
 - Nutzung von Dokumentationen und Best Practices zu Web Scraping, REST-APIs und Filterlogik
-- ChatGPT kenntlich machen; genutzte Internetseiten dokumentieren
+-Für die Initalerstellung eines Grundrisses an Hand der Projektbeschreibung(mit dem Ziel eine Testumgebung für spätere Entwicklung zu kreieren) und zu Erstellung von Codeblöcken und Debugging wurde chatgpt.com benutzt.
 - Frontend: CSS mit Hilfe von ChatGPT, grobes Layout, Hilfe mit dem Filter-Zurücksetzen
 
 ## Inspiration
