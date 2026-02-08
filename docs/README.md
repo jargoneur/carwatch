@@ -101,5 +101,5 @@ See Pages for the full schema.
 Auth is intentionally minimal.
 
 ## License
-Private / internal use only (update if needed).
+Private / internal use only
 
