@@ -5,7 +5,7 @@ nav_order: 3
 
 # Data Model
 
-Unten ist das ER-Diagramm als **Mermaid**. Wenn es bei dir nicht rendert, prüfe in `docs/_config.yml`, dass Mermaid aktiviert ist (siehe Datei in diesem Paket).
+
 
 ```mermaid
 erDiagram
