@@ -9,7 +9,7 @@ nav_order: 2
 
 Dieses Diagramm zeigt die Hauptbausteine (Flask App, Scraping, Scorer, Database) und deren Kopplungen.
 
-## Diagramm (empfohlen: als SVG einbetten)
+## Diagramm 
 
 
 ![Architecture diagram]({{ site.baseurl }}/assets/img/architecture.svg)
