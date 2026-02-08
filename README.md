@@ -1,6 +1,7 @@
 ```md
 # Carwatch
 
+Runs on 127.0.0.1:5000
 Internal tool that scrapes used‑car listings from online marketplaces, stores them in SQLite, scores deals relative to the market, and displays results in a Flask web app.
 
 ## Audience
